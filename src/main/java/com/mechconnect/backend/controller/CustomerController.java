@@ -8,16 +8,13 @@ package com.mechconnect.backend.controller;
  */
 
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,17 +27,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mechconnect.backend.dto.LoginRequestDto;
-import com.mechconnect.backend.dto.MechanicRequestCreateDto;
-import com.mechconnect.backend.dto.OrderResponseWithoutCustomerDto;
-import com.mechconnect.backend.dto.PasswordResetRequest;
+import com.mechconnect.backend.dto.ServiceRequestCreateDto;
+import com.mechconnect.backend.dto.PasswordResetRequestDto;
+import com.mechconnect.backend.dto.CustomerOrderDto;
 import com.mechconnect.backend.dto.CustomerRegistrationRequest;
 import com.mechconnect.backend.entity.Customer;
-import com.mechconnect.backend.entity.Mechanic;
-import com.mechconnect.backend.entity.MechanicRequest;
-import com.mechconnect.backend.entity.Orders;
-import com.mechconnect.backend.repository.CustomerRepository;
+import com.mechconnect.backend.entity.ServiceRequest;
 import com.mechconnect.backend.service.CustomerService;
-import com.mechconnect.backend.service.MechanicRequestService;
+import com.mechconnect.backend.service.ServiceRequestService;
 import com.mechconnect.backend.service.MechanicService;
 
 import jakarta.annotation.PostConstruct;
@@ -49,8 +43,7 @@ import jakarta.annotation.PostConstruct;
 @RequestMapping(value="/api")
 public class CustomerController {
 	
-	@Autowired
-	private BCryptPasswordEncoder passwordEncoder;
+	
 
 	
 	@Autowired
@@ -60,10 +53,9 @@ public class CustomerController {
 	@Autowired
 	MechanicService mechanicService;
 	@Autowired
-	MechanicRequestService mechanicRequestService;
+	ServiceRequestService mechanicRequestService;
 	
-	@Autowired
-	private CustomerRepository customerRepository;
+	
 	
 	@Value
 	("${test.Customer.name}")
@@ -74,7 +66,7 @@ public class CustomerController {
 		
 	}
 		
-	//localhost:8080/api/saveUser
+//	Register Customer
 	@CrossOrigin
 	//@RequestMapping(method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@PostMapping(value="/saveCustomer",consumes=MediaType.APPLICATION_JSON_VALUE)
@@ -85,53 +77,36 @@ public class CustomerController {
 		return customerService.SaveCustomer(registerCustomer);
 	}
 		
-		
-		@PostMapping("/SaveOrders")
-		 public String SaveOrders(@RequestBody OrderResponseWithoutCustomerDto OrdersResponseWithoutCustomers) {
-			System.out.println("Controller Started");
-			 System.out.println("In Save Order");
-			return customerService.SaveOrders(OrdersResponseWithoutCustomers);
-		 
-	 }
-		
+	
+	
+//	Customer Log In
+	@CrossOrigin
+	@PostMapping(value = "/Customerlogin", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequest) {
+
+	    Customer customer = customerService.loginCustomer(loginRequest);
+
+	    if (customer == null) {
+	        return ResponseEntity.status(401).body("Invalid email or password");
+	    }
+
+	    return ResponseEntity.ok(customer);
+	}
+
+	
+			
+		// 1) GET Customer PROFILE 
 		@CrossOrigin
-		@PostMapping(value="/Customerlogin", consumes = MediaType.APPLICATION_JSON_VALUE)
-		public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequest) {
-
-		    String cleanEmail = loginRequest.getEmail().trim();
-		    Customer customer = customerService.findByEmail(cleanEmail);
-		    String rawPassword = loginRequest.getpassword();
-		    
-		    if (customer == null) {
-		        return ResponseEntity.status(404).body("User not found");
-		    }
-
-		    if (!passwordEncoder.matches(rawPassword, customer.getPassword())) {
-		        return ResponseEntity.status(401).body("Password is incorrect");
-		    }
-
-		    
-		 //   if (!customer.getPassword().equals(loginRequest.getpassword())) {
-		    //    return ResponseEntity.status(401).body("Password is incorrect");
-		  //  }
-
-		    // RETURN CUSTOMER OBJECT
-		    return ResponseEntity.ok(customer);
-		}
-
-		
-		// 1) GET PROFILE matching your frontend fetch(`http://localhost:6060/api/${user.customerId}`)
-		@CrossOrigin
-		@GetMapping("/customer/{customerId}")
+		@GetMapping("/customer/profile/{customerId}")
 	    public ResponseEntity<?> getCustomerProfile(@PathVariable Long customerId) {
-	        Customer customer = customerService.getCustomerById(customerId);
+	        Customer customer = customerService.getCustomerProfile(customerId);
 	        if (customer == null) return ResponseEntity.status(404).body("Customer not found");
 	        return ResponseEntity.ok(customer);
 	    }
 
-	    // 2) UPDATE PROFILE
+	    // 2) UPDATE CUSTOMER PROFILE
 		@CrossOrigin
-		@PutMapping("/customer/update") // PUT method
+		@PutMapping("/customer/profile/update") // PUT method
 		public ResponseEntity<?> updateCustomer(@RequestBody Customer customer) {
 		    // Map frontend `id` to `customerId` if necessary
 		    if (customer.getCustomerId() == null && customer.getCustomerId() != null) {
@@ -150,11 +125,10 @@ public class CustomerController {
 		}
 
 
-	    // 3) CHANGE PASSWORD
+	    // 3) CHANGE Customer PASSWORD (From Profile)
 		@CrossOrigin
-		// allow your frontend
 		@PutMapping("/customer/change-password")
-		public ResponseEntity<?> changePassword(@RequestBody PasswordResetRequest req) {
+		public ResponseEntity<?> changePassword(@RequestBody PasswordResetRequestDto req) {
 
 		    System.out.println("DEBUG customerId = " + req.getCustomerId());
 		    System.out.println("DEBUG oldPassword = " + req.getOldPassword());
@@ -175,71 +149,42 @@ public class CustomerController {
 
 		    return ResponseEntity.ok("Password updated successfully");
 		}
-
-
-		
-	
-
-
-
-
-		@CrossOrigin
-       @GetMapping(value="/GetCustomer")
-       public List<Customer> getAllCustomer() {
-    	   System.out.println("User Name From Prop"+CustomerNameFromProp);
-    	   System.out.println("Get All Users Called");
-    	   return customerService.getAllCustomer();
-    	   }	
 		
 		
-       @PutMapping("/updateCustomer/{customerId}")
-       public String updateCustomer(@PathVariable Long customerId,@RequestBody CustomerRegistrationRequest registerCustomer) {
-    	   return customerService.updateCustomer(customerId,registerCustomer);
-    	   
-       }
+//     for Delelete cusstomer profile (Not yet Used)
        @DeleteMapping("/deleteCustomer/{customerId}")
     	   public String deleteCustomer(@PathVariable Long customerId,@PathVariable String name,@RequestParam String email,@RequestParam String Password) {
     	   System.out.println("In Delet API "+customerId+" "+name+" "+email+" "+Password+"");
     	   return customerService.deleteCustomer(customerId);
        }
-       @PostMapping("/createOrder/{customerId}")
-       public String createOrder(@PathVariable Long customerId) {
-    	   System.out.println("create order fore User"+customerId);
-    	   return customerService.createOrder(customerId);
-       }
        
-       @GetMapping("/getOrdersById/{customerId}")
-       public List<Orders> getOrdersById(@PathVariable Long customerId){
-    	   System.out.println("Get Orders By ID");
-    	   return customerService.getOrdersById(customerId);
-       }
-     
        
-       @GetMapping("/customer/requests/{customerId}")
-       public List<MechanicRequest> getRequestsForCustomer(@PathVariable Long customerId) {
-           return mechanicRequestService.getRequestsForCustomer(customerId);
-       }
+       
+   
     
     
+    
+
+// 		Get Nearby Mechanics Based On Location & Specialization    
+//       Get Near by Mechanics	
        @CrossOrigin
        @GetMapping("/mechanics/nearby")
-       public ResponseEntity<List<Mechanic>> getNearbyMechanics(
+       public ResponseEntity<?> getNearbyMechanics(
                @RequestParam String serviceLocation,
                @RequestParam String serviceType
        ) {
-           List<Mechanic> mechanics =
-                   mechanicService.findNearbyMechanics(serviceLocation, serviceType);
-
-           if (mechanics.isEmpty()) {
-               return ResponseEntity.noContent().build();
-           }
-
-           return ResponseEntity.ok(mechanics);
+           return ResponseEntity.ok(
+               mechanicService.findNearbyMechanics(serviceLocation, serviceType)
+           );
        }
+
        
-       
-       @CrossOrigin
-       @PostMapping("/customers/forgot-password/find-user")
+
+
+
+
+       // 1️⃣ FIND USER & SEND OTP
+       @PostMapping("/find-user")
        public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
 
            String email = request.get("email");
@@ -248,29 +193,17 @@ public class CustomerController {
                return ResponseEntity.badRequest().body("Email is required");
            }
 
-           email = email.trim().toLowerCase();
+           boolean sent = customerService.sendOtpForForgotPassword(email);
 
-           System.out.println("Searching email: [" + email + "]");
-
-           Customer customer = customerRepository.findByEmail(email); // ✅ FIXED
-
-           if (customer == null) {
+           if (!sent) {
                return ResponseEntity.status(404).body("Email not registered");
            }
 
-           String otp = String.valueOf(new Random().nextInt(900000) + 100000);
-
-           customer.setOtp(otp);
-           customer.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
-
-           customerRepository.save(customer);
-
            return ResponseEntity.ok("OTP sent successfully");
        }
-       
-       
-       @CrossOrigin
-       @PostMapping("/customers/forgot-password/verify-otp")
+
+       // 2️⃣ VERIFY OTP
+       @PostMapping("/verify-otp")
        public ResponseEntity<?> verifyOtp(@RequestBody Map<String, String> request) {
 
            String email = request.get("email");
@@ -281,85 +214,67 @@ public class CustomerController {
                return ResponseEntity.badRequest().body("Email and OTP are required");
            }
 
-           email = email.trim().toLowerCase();
-           otp = otp.trim();
+           String result = customerService.verifyOtp(email, otp);
 
-           Customer customer = customerRepository.findByEmail(email);
-
-           if (customer == null) {
-               return ResponseEntity.status(404).body("Email not registered");
-           }
-
-           // 🔐 Check OTP
-           if (!otp.equals(customer.getOtp())) {
-               return ResponseEntity.status(400).body("Invalid OTP");
-           }
-
-           // ⏰ Check expiry
-           if (customer.getOtpExpiry().isBefore(LocalDateTime.now())) {
-               return ResponseEntity.status(400).body("OTP expired");
+           if (!result.equals("SUCCESS")) {
+               return ResponseEntity.badRequest().body(result);
            }
 
            return ResponseEntity.ok("OTP verified successfully");
        }
-       
+
+       // 3️⃣ RESET PASSWORD
+       @PostMapping("/reset-password")
+       public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
+
+           String email = request.get("email");
+           String newPassword = request.get("newPassword");
+
+           if (email == null || email.trim().isEmpty()
+                   || newPassword == null || newPassword.trim().isEmpty()) {
+               return ResponseEntity.badRequest().body("Email and new password are required");
+           }
+
+           String result = customerService.resetPassword(email, newPassword);
+
+           if (!result.equals("SUCCESS")) {
+               return ResponseEntity.badRequest().body(result);
+           }
+
+           return ResponseEntity.ok("Password reset successful");
+       }
 
 
 
-
-
-//4 RESET PASSWORD
-
-@CrossOrigin
-@PostMapping("/customers/forgot-password/reset-password")
-public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
-
-    String email = request.get("email");
-    String newPassword = request.get("newPassword");
-
-    // ✅ Validation
-    if (email == null || email.trim().isEmpty()
-            || newPassword == null || newPassword.trim().isEmpty()) {
-        return ResponseEntity.badRequest().body("Email and new password are required");
-    }
-
-    email = email.trim().toLowerCase();
-    newPassword = newPassword.trim();
-
-    Customer customer = customerRepository.findByEmail(email);
-
-    if (customer == null) {
-        return ResponseEntity.status(404).body("Email not registered");
-    }
-
-    // 🔐 Ensure OTP exists (means it was generated & verified)
-    if (customer.getOtp() == null || customer.getOtpExpiry() == null) {
-        return ResponseEntity.status(400).body("OTP verification required");
-    }
-
-    // ⏰ Check OTP expiry again for safety
-    if (customer.getOtpExpiry().isBefore(LocalDateTime.now())) {
-        return ResponseEntity.status(400).body("OTP expired");
-    }
-
-    // 🔐 Encrypt & update password
-    customer.setPassword(passwordEncoder.encode(newPassword));
-
-    // 🧹 Clear OTP after successful reset
-    customer.setOtp(null);
-    customer.setOtpExpiry(null);
-
-    customerRepository.save(customer);
-
-    return ResponseEntity.ok("Password reset successful");
-}
 
 //send service request api
-@CrossOrigin
-@PostMapping(value="/sendRequest" ,consumes = MediaType.APPLICATION_JSON_VALUE)
-public String sendRequest(@RequestBody MechanicRequestCreateDto dto) {
-    return mechanicRequestService.sendRequest(dto);
-}
+		@CrossOrigin
+		@PostMapping(value="/sendRequest" ,consumes = MediaType.APPLICATION_JSON_VALUE)
+		public String sendRequest(@RequestBody ServiceRequestCreateDto dto) {
+		    return mechanicRequestService.sendRequest(dto);
+		}
 
 
+		
+//  Get Orders 
+//		@GetMapping("customer/orders")
+//		public ResponseEntity<List<CustomerOrderDto>> getCustomerOrders(
+//		        @RequestParam Long customerId) {
+//
+//		    return ResponseEntity.ok(
+//		            customerService.getOrdersForCustomer(customerId)
+//		    );
+//		}
+
+	       @CrossOrigin
+		@GetMapping("/customer/orders")
+		public ResponseEntity<List<CustomerOrderDto>> getOrders(
+		        @RequestParam Long customerId) {
+
+		    return ResponseEntity.ok(
+		        customerService.getOrdersForCustomer(customerId)
+		    );
+		}
+
+		
 }

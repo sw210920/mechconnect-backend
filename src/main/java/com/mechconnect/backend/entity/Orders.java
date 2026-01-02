@@ -19,7 +19,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.mechconnect.backend.entity.enums.OrderStatus;
@@ -58,7 +57,7 @@ public class Orders {
 
     private String packageName;
 
-    private LocalDate serviceDate;
+    private  String ServiceDate;
 
     private String serviceTime;
 
@@ -137,7 +136,12 @@ public class Orders {
         this.serviceType = serviceType;
     }
 
-    public String getPackageName() {
+    public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+
+	public String getPackageName() {
         return packageName;
     }
 
@@ -145,13 +149,7 @@ public class Orders {
         this.packageName = packageName;
     }
 
-    public LocalDate getServiceDate() {
-        return serviceDate;
-    }
-
-    public void setServiceDate(LocalDate serviceDate) {
-        this.serviceDate = serviceDate;
-    }
+   
 
     public String getServiceTime() {
         return serviceTime;
@@ -189,7 +187,7 @@ public class Orders {
         this.mechanic = mechanic;
     }
 
-	public void setMechanicRequest(MechanicRequest request) {
+	public void setMechanicRequest(ServiceRequest request) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -214,8 +212,15 @@ public class Orders {
 		
 	}
 
-	public void setServiceDate(String serviceDate2) {
-		// TODO Auto-generated method stub
-		
+
+	public String getServiceDate() {
+		return ServiceDate;
 	}
+
+
+	public void setServiceDate(String serviceDate) {
+		this.ServiceDate = serviceDate;
+	}
+
+	
 }

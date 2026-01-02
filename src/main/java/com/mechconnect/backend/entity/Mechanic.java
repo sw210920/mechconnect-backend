@@ -11,9 +11,13 @@ package com.mechconnect.backend.entity;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import com.mechconnect.backend.entity.enums.ServiceType;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -50,7 +54,8 @@ public class Mechanic {
 	private String serviceLocation;
 	
 	@Column(name="Specialization")
-	private String specialization;
+	@Enumerated(EnumType.STRING)
+    private ServiceType specialization;
 	
 	@Column (name="otp")
     private String otp;
@@ -59,7 +64,7 @@ public class Mechanic {
     private LocalDateTime otpExpiry;
 	
 	
-    private boolean available;
+    
 
 	
 	
@@ -116,6 +121,16 @@ public class Mechanic {
 	}
 
 
+	public ServiceType getSpecialization() {
+		return specialization;
+	}
+
+
+	public void setSpecialization(ServiceType specialization) {
+		this.specialization = specialization;
+	}
+
+
 	public String getPassword() {    
 	    return password;
 	}
@@ -144,14 +159,7 @@ public class Mechanic {
 	}
 
 
-	public String getSpecialization() {
-		return specialization;
-	}
-
-
-	public void setSpecialization(String specialization) {
-		this. specialization = specialization;
-	}
+	
 
 
 	public String getServiceLocation() {

@@ -29,4 +29,12 @@ public interface OrderRepository extends JpaRepository<Orders,Long> {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	 List<Orders> findByCustomer_CustomerIdOrderByCreatedAtDesc(Long customerId);
+	 
+	 List<Orders> findByCustomer_CustomerId(Long customerId);
+
+	 
+	 
+	 
 }

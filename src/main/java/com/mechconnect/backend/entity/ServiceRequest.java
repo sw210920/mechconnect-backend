@@ -1,5 +1,7 @@
 package com.mechconnect.backend.entity;
 
+import java.time.LocalDateTime;
+
 /**
  * MechanicRequest
  *
@@ -8,13 +10,15 @@ package com.mechconnect.backend.entity;
  */
 
 
-import java.time.LocalDate;
+
+import com.mechconnect.backend.entity.enums.RequestStatus;
+import com.mechconnect.backend.entity.enums.ServiceMode;
 
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "mechanic_request")
-public class MechanicRequest {
+public class ServiceRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,10 +38,15 @@ public class MechanicRequest {
     @Column(name = "vehicle_year", nullable = false)
     private String vehicleYear;
    
+    @Enumerated(EnumType.STRING)
+    private ServiceMode serviceMode;    
+
+    @Column(length = 500)
+    private String serviceAddress;        
     
     
-    
-    private String customerName;
+  
+	private String customerName;
     private String serviceType;
     private String serviceLocation;
     private String packageName;
@@ -54,9 +63,34 @@ public class MechanicRequest {
 
    
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private RequestStatus status;
+       
+    
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
-  
+    
+//    GETTER SETTER
+    
+    
+    public ServiceMode getServiceMode() {
+  		return serviceMode;
+  	}
+
+  	public void setServiceMode(ServiceMode serviceMode) {
+  		this.serviceMode = serviceMode;
+  	}
+
+  	public String getServiceAddress() {
+  		return serviceAddress;
+  	}
+
+  	public void setServiceAddress(String serviceAddress) {
+  		this.serviceAddress = serviceAddress;
+  	}
+
 
     public Long getRequestId() {
         return requestId;
@@ -150,13 +184,15 @@ public class MechanicRequest {
         this.registrationNumber = registrationNumber;
     }
 
-    public String getStatus() {
-        return status;
-    }
+   
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+	public RequestStatus getstatus() {
+		return status;
+	}
+
+	public void setstatus(RequestStatus status) {
+		this.status = status;
+	}
 
 	public String getVehicleYear() {
 		return vehicleYear;

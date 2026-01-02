@@ -1,5 +1,7 @@
 package com.mechconnect.backend.dto;
 
+
+
 /**
  * MechanicRegistrationRequest
  *
@@ -21,13 +23,23 @@ public String firstName;
 	
 	public String YearsOfExperience;
 	
-	public String Specialization;
+	
+    private String specialization;
 	
 	public String  ServiceLocation;
 	
 	public  String Certifications;
 	
 	public 	String Bio;
+
+	
+	public String getSpecialization() {
+		return specialization;
+	}
+
+	public void setSpecialization(String specialization) {
+		this.specialization = specialization;
+	}
 
 	public String getMobailNumber() {
 		return MobailNumber;
@@ -73,13 +85,7 @@ public String firstName;
 		YearsOfExperience = yearsOfExperience;
 	}
 
-	public String getSpecialization() {
-		return Specialization;
-	}
-
-	public void setSpecialization(String specialization) {
-		Specialization = specialization;
-	}
+	
 
 	public String getServiceLocation() {
 		return ServiceLocation;

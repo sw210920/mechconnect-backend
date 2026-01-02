@@ -8,7 +8,7 @@ package com.mechconnect.backend.dto;
  */
 
 
-public class PasswordResetRequest {
+public class PasswordResetRequestDto {
 
     private Long customerId;
     private String oldPassword;
@@ -17,7 +17,7 @@ public class PasswordResetRequest {
 
     
 	//no-args constructor
-    public PasswordResetRequest() {}
+    public PasswordResetRequestDto() {}
 
     public Long getCustomerId() {
         return customerId;

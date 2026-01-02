@@ -1,5 +1,10 @@
 package com.mechconnect.backend.dto;
 
+import com.mechconnect.backend.entity.enums.ServiceType;
+
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+
 /**
  * MechanicProfileResponseDto
  *
@@ -16,7 +21,10 @@ public class MechanicProfileResponseDto {
     private String email;
     private String mobailNumber;
 
-    private String specialization;
+    @Enumerated(EnumType.STRING)
+    private ServiceType specialization;
+    
+    
     private String serviceLocation;
     private String yearsOfExperience;
 
@@ -52,10 +60,11 @@ public class MechanicProfileResponseDto {
 	public void setMobailNumber(String mobailNumber) {
 		this.mobailNumber = mobailNumber;
 	}
-	public String getSpecialization() {
+	
+	public ServiceType getSpecialization() {
 		return specialization;
 	}
-	public void setSpecialization(String specialization) {
+	public void setSpecialization(ServiceType specialization) {
 		this.specialization = specialization;
 	}
 	public String getServiceLocation() {

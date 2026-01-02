@@ -1,5 +1,7 @@
 package com.mechconnect.backend.dto;
 
+import com.mechconnect.backend.entity.enums.ServiceMode;
+
 /**
  * MechanicRequestCreateDto
  *
@@ -8,7 +10,7 @@ package com.mechconnect.backend.dto;
  */
 
 
-public class MechanicRequestCreateDto {
+public class ServiceRequestCreateDto {
 
     private Long customerId;
     private Long mechanicId;
@@ -18,9 +20,28 @@ public class MechanicRequestCreateDto {
     private String serviceLocation;
 
     private String packageName;
-    private String date;
+    private String ServiceDate;
     private String time;
+    private ServiceMode serviceMode;
+    public ServiceMode getServiceMode() {
+		return serviceMode;
+	}
 
+	public void setServiceMode(ServiceMode serviceMode) {
+		this.serviceMode = serviceMode;
+	}
+
+	public String getServiceAddress() {
+		return serviceAddress;
+	}
+
+	public void setServiceAddress(String serviceAddress) {
+		this.serviceAddress = serviceAddress;
+	}
+
+	private String serviceAddress;
+    
+    
     private String make;
     private String model;
     private String vehicleYear;
@@ -78,12 +99,12 @@ public class MechanicRequestCreateDto {
         this.packageName = packageName;
     }
 
-    public String getDate() {
-        return date;
+    public String getServiceDate() {
+        return ServiceDate;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setServiceDate(String serviceDate) {
+        this.ServiceDate = serviceDate;
     }
 
     public String getTime() {

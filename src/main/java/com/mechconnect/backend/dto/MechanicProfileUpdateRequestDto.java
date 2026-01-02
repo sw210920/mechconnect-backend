@@ -1,5 +1,7 @@
 package com.mechconnect.backend.dto;
 
+
+
 /**
  * MechanicProfileUpdateRequestDto
  *
@@ -13,7 +15,10 @@ public class MechanicProfileUpdateRequestDto {
 	    private String firstName;
 	    private String lastName;
 	    private String mobailNumber;
+	    
+	   
 	    private String specialization;
+	    
 	    private String serviceLocation;
 	    private String yearsOfExperience;
 	    private String certifications;
@@ -43,6 +48,10 @@ public class MechanicProfileUpdateRequestDto {
 		public void setMobailNumber(String mobailNumber) {
 			this.mobailNumber = mobailNumber;
 		}
+	
+		
+		
+		
 		public String getSpecialization() {
 			return specialization;
 		}

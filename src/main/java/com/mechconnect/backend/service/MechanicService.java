@@ -9,49 +9,60 @@ package com.mechconnect.backend.service;
 
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 
-import com.mechconnect.backend.dto.OrderResponseWithoutCustomerDto;
-import com.mechconnect.backend.dto.OrderResponseWithoutMechanicDto;
+
+import com.mechconnect.backend.dto.LoginRequestDto;
+import com.mechconnect.backend.dto.MechanicProfileUpdateRequestDto;
 import com.mechconnect.backend.dto.MechanicRegistrationRequest;
+import com.mechconnect.backend.dto.NearbyMechanicCardResponseDto;
 import com.mechconnect.backend.entity.Mechanic;
-import com.mechconnect.backend.entity.Orders;
 
 public interface MechanicService {
 
-
-	List<Mechanic> getAllMechanic();
-
-	Mechanic updateMechanic(Long id, MechanicRegistrationRequest registerMechanic);
-
 	String saveMechanic(MechanicRegistrationRequest registerMechanic);
 
-	String deleteMechanic(Long id);
-
-	String AcceptOrder(Long mechanicId);
-
-	List<Orders> getOrdersById2(Long mechanicId);
-
-    Mechanic findByEmail(String email);
-
-	List<Mechanic> findAll();
 	
-	 Mechanic findById(Long id);  
+	
+	ResponseEntity<?> mechanicLogin(LoginRequestDto loginRequest);		
+	
+	
 
-	Mechanic getMechanicById(Long mechanicId);
+	 ResponseEntity<?> getMechanicProfile(Long id);
+	
+	
+	Mechanic updateMechanicProfile(MechanicProfileUpdateRequestDto request);
 
-	List<Mechanic> getAllMechanic(Long mechanicId);
+	  boolean changePassword(Long mechanicId, String oldPassword, String newPassword);
 
-	Mechanic updateMechanic(Mechanic mechanic);
+	  ResponseEntity<?> findMechanicForForgotPassword(Map<String, String> request);
+	  
+	  ResponseEntity<?> verifyOtpForForgotPassword(Map<String, String> request);
+	  
+	  ResponseEntity<?> resetForgotPassword(Map<String, String> request);
+	  
+	  String deleteMechanic(Long id);
+	  
+	  
 
-    boolean changePassword(Long mechanicId, String oldPassword, String newPassword);
+	  List<NearbyMechanicCardResponseDto> findNearbyMechanics(String serviceLocation, String serviceType);
+
+		 
+	  void rejectRequest(Long requestId);
 
 	
-	 List<Mechanic> findNearbyMechanics(String serviceLocation, String serviceType);
 
-	 void save(Mechanic mechanic); 
+	
+   
 
+	
+
+ 
+
+	
+	
 
 	
 
