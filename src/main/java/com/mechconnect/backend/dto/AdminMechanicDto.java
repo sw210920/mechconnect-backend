@@ -2,36 +2,40 @@ package com.mechconnect.backend.dto;
 
 public class AdminMechanicDto {
 
-	  private Long mechanicId;
-	    private String name;
-	    private String specialization;
+		  private Long mechanicId;
+	  private String firstName;
+	  private String lastName;
+	  private String MobailNumber;
+	  private String email;
+	  private String address;
+	  private String serviceLocation;
 	    private String yearsOfExperience;
-	    private String email;
-	    private String address;
+	    private String specialization;
+	    private String certifications;
+	    
 		public Long getMechanicId() {
 			return mechanicId;
 		}
 		public void setMechanicId(Long mechanicId) {
 			this.mechanicId = mechanicId;
 		}
-		public String getName() {
-			return name;
+		public String getFirstName() {
+			return firstName;
 		}
-		public void setName(String name) {
-			this.name = name;
+		public void setFirstName(String firstName) {
+			this.firstName = firstName;
 		}
-		public String getSpecialization() {
-			return specialization;
+		public String getLastName() {
+			return lastName;
 		}
-		public void setSpecialization(String specialization) {
-			this.specialization = specialization;
+		public void setLastName(String lastName) {
+			this.lastName = lastName;
 		}
-		
-		public String getYearsOfExperience() {
-			return yearsOfExperience;
+		public String getMobailNumber() {
+			return MobailNumber;
 		}
-		public void setYearsOfExperience(String yearsOfExperience) {
-			this.yearsOfExperience = yearsOfExperience;
+		public void setMobailNumber(String mobailNumber) {
+			MobailNumber = mobailNumber;
 		}
 		public String getEmail() {
 			return email;
@@ -45,4 +49,32 @@ public class AdminMechanicDto {
 		public void setAddress(String address) {
 			this.address = address;
 		}
+		public String getServiceLocation() {
+			return serviceLocation;
+		}
+		public void setServiceLocation(String serviceLocation) {
+			this.serviceLocation = serviceLocation;
+		}
+		public String getYearsOfExperience() {
+			return yearsOfExperience;
+		}
+		public void setYearsOfExperience(String yearsOfExperience) {
+			this.yearsOfExperience = yearsOfExperience;
+		}
+		public String getSpecialization() {
+			return specialization;
+		}
+		public void setSpecialization(String specialization) {
+			this.specialization = specialization;
+		}
+	   
+	   
+		  public String getCertifications() {
+				return certifications;
+			}
+			public void setCertifications(String certifications) {
+				this.certifications = certifications;
+			}
+
+		
 }

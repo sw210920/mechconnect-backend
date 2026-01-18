@@ -47,4 +47,7 @@ public interface OrderRepository extends JpaRepository<Orders,Long> {
             List<RequestStatus> statuses
     );
     
+    List<Orders> findAllByOrderByCreatedAtDesc();
+
+    
 }
