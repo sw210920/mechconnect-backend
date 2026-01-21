@@ -69,6 +69,13 @@ public class Orders {
     @JoinColumn(name = "mechanic_id", referencedColumnName = "mechanicId", nullable = false)
     private Mechanic mechanic;
 
+    @Column(nullable = false)
+    private boolean completionRequested = false;
+
+    @Column(nullable = false)
+    private boolean completionConfirmed = false;
+    
+    
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
@@ -235,6 +242,23 @@ public class Orders {
 
 	public void setServiceDate(String serviceDate) {
 		this.ServiceDate = serviceDate;
+	}
+
+	
+	public boolean isCompletionRequested() {
+	    return completionRequested;
+	}
+
+	public void setCompletionRequested(boolean completionRequested) {
+	    this.completionRequested = completionRequested;
+	}
+
+	public boolean isCompletionConfirmed() {
+	    return completionConfirmed;
+	}
+
+	public void setCompletionConfirmed(boolean completionConfirmed) {
+	    this.completionConfirmed = completionConfirmed;
 	}
 
 	

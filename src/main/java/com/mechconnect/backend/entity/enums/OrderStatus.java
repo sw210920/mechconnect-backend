@@ -9,11 +9,12 @@ package com.mechconnect.backend.entity.enums;
 
 
 public enum OrderStatus {
-	 NEW,
+		PENDING,
 	    ACCEPTED,
-	    PENDING,
-	    COMPLETED,
-	    REJECTED
+	    REJECTED,
+	    COMPLETION_REQUESTED,
+	    COMPLETED
+	   
 }
 
 

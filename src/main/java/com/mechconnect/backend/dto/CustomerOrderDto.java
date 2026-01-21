@@ -3,8 +3,12 @@ package com.mechconnect.backend.dto;
 import com.mechconnect.backend.entity.enums.ServiceMode;
 
 public class CustomerOrderDto {
+	
+	 private Long orderId;
+	
+   
 
-    private String orderNumber;
+	private String orderNumber;
     private String serviceType;
     private String packageName;
     private String serviceDate;
@@ -23,6 +27,15 @@ public class CustomerOrderDto {
     private String vehicleModel;
     private String status;
 
+    public Long getOrderId() {
+		return orderId;
+	}
+
+	 public void setOrderId(Long orderId) {
+		 this.orderId = orderId;
+	 }
+    
+    
 	public Long getMechanicId() {
 		return mechanicId;
 	}
