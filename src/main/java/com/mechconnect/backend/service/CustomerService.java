@@ -57,6 +57,9 @@ public interface CustomerService {
 	        Long customerId,
 	        RequestStatus status
 	);
+
+
+	boolean confirmOrderCompletion(Long orderId, Long customerId);
 	
 	
 	

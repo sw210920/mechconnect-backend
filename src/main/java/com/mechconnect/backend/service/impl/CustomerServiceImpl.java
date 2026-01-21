@@ -283,6 +283,8 @@ public class CustomerServiceImpl implements CustomerService {
 
 			        CustomerOrderDto dto = new CustomerOrderDto();
 			        
+			        
+			        
 			        dto.setOrderNumber("REQ-" + req.getRequestId());
 			        dto.setServiceType(req.getServiceType());
 			        dto.setPackageName(req.getPackageName());
@@ -316,6 +318,8 @@ public class CustomerServiceImpl implements CustomerService {
 
 			        CustomerOrderDto dto = new CustomerOrderDto();
 
+			        dto.setOrderId(order.getOrderId()); 
+			        
 			        dto.setOrderNumber(order.getOrderNumber());
 			        dto.setServiceType(order.getServiceType());
 			        dto.setPackageName(order.getPackageName());
@@ -360,5 +364,31 @@ public class CustomerServiceImpl implements CustomerService {
 		return null;
 	}
 
+	
+	
+	@Override
+	public boolean confirmOrderCompletion(Long orderId, Long customerId) {
+
+	    Orders order = orderRepository.findById(orderId)
+	            .orElseThrow(() -> new RuntimeException("Order not found"));
+
+	    // ✅ security: customer must own the order
+	    if (order.getCustomer() == null || !order.getCustomer().getCustomerId().equals(customerId)) {
+	        throw new RuntimeException("Unauthorized");
+	    }
+
+	    // ✅ only Completion Requested can be confirmed
+	    if (order.getStatus() != OrderStatus.COMPLETION_REQUESTED) {
+	        return false;
+	    }
+
+	    order.setStatus(OrderStatus.COMPLETED);
+	    orderRepository.save(order);
+
+	    return true;
+	}
+
+	
+	
 
 }

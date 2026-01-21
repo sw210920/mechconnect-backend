@@ -58,6 +58,10 @@ public interface MechanicService {
 	  List<MechanicOrderDto> getOrdersForMechanic(Long mechanicId);
 
 	    boolean markOrderCompleted(Long orderId, Long mechanicId);
+
+
+
+		boolean requestOrderCompletion(Long orderId, Long mechanicId);
    
 
 	

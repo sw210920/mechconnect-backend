@@ -277,4 +277,19 @@ public class CustomerController {
 		}
 
 		
+	       
+	       @PutMapping("/customer/orders/{orderId}/confirm-complete")
+	       public ResponseEntity<?> confirmOrderComplete(
+	               @PathVariable Long orderId,
+	               @RequestParam Long customerId
+	       ) {
+	           boolean ok = customerService.confirmOrderCompletion(orderId, customerId);
+	           return ResponseEntity.ok(ok ? "Order completed" : "Not allowed");
+	       }
+
+	       
+	       
+	       
+	       
+	       
 }
