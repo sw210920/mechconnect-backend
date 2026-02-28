@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="https://maven.apache.org/POM/4.0.0" xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsdmaven-4.0.0.xsd">/
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -11,6 +11,7 @@
 	<groupId>com.projectpractice</groupId>
 	<artifactId>mechconnect-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>mechconnect-backend</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
@@ -61,12 +62,7 @@
 	
 		
 		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
-<dependency>
-    <groupId>org.hibernate</groupId>
-    <artifactId>hibernate-core</artifactId>
-    <version>7.0.9.Final</version>
-    <type>pom</type>
-</dependency>
+
 		
 						<dependency>
 				  <groupId>org.projectlombok</groupId>
