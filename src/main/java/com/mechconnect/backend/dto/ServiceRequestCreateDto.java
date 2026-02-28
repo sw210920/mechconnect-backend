@@ -23,7 +23,29 @@ public class ServiceRequestCreateDto {
     private String ServiceDate;
     private String time;
     private ServiceMode serviceMode;
-    public ServiceMode getServiceMode() {
+    
+    private String customServiceNote;
+    private Double customPrice;
+    
+    
+    
+    public String getCustomServiceNote() {
+		return customServiceNote;
+	}
+
+	public void setCustomServiceNote(String customServiceNote) {
+		this.customServiceNote = customServiceNote;
+	}
+
+	public Double getCustomPrice() {
+		return customPrice;
+	}
+
+	public void setCustomPrice(Double customPrice) {
+		this.customPrice = customPrice;
+	}
+
+	public ServiceMode getServiceMode() {
 		return serviceMode;
 	}
 

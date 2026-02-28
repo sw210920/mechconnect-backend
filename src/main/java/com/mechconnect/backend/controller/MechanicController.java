@@ -172,6 +172,7 @@ public class MechanicController {
 		
        
 // 		For Deleting Mechanic PRofile  (Not Yet Used)
+       @CrossOrigin
        @DeleteMapping("/deleteMechanic/{mechanicId}/{name}")
     	   public String deleteMechanic(@PathVariable Long mechanicId,@PathVariable String name,@RequestParam String email,@RequestParam String Password ,@RequestParam String MobailNumber ,@RequestParam String Bio ,@RequestParam String Certifications ,@RequestParam String YearsOfExperience ,@RequestParam String Specializations ,@RequestParam String ServiceLocation ) {
     	   System.out.println("In Delet API "+mechanicId+" "+name+" "+email+" "+Password+" "+Bio+" "+Certifications+""+MobailNumber+""+YearsOfExperience+""+Specializations+""+ServiceLocation+"");
@@ -181,6 +182,7 @@ public class MechanicController {
        
           
 // to fetch orders on mechanic log in
+       @CrossOrigin
        @GetMapping("/mechanic/orders")
        public ResponseEntity<List<MechanicOrderDto>> getOrders(
                @RequestParam Long mechanicId
@@ -190,24 +192,20 @@ public class MechanicController {
            );
        }
 
-       // ✅ Mark order completed
-       @PostMapping("/orders/{orderId}/complete")
-       public ResponseEntity<?> completeOrder(
+
+       
+       
+       
+       
+ @CrossOrigin
+       @PutMapping("/mechanic/orders/{orderId}/request-complete")
+       public ResponseEntity<?> requestOrderComplete(
                @PathVariable Long orderId,
                @RequestParam Long mechanicId
        ) {
-           boolean success =
-                   mechanicService.markOrderCompleted(orderId, mechanicId);
-
-           if (!success) {
-               return ResponseEntity.badRequest()
-                       .body("Order cannot be completed");
-           }
-
-           return ResponseEntity.ok("Order marked as completed");
+           boolean ok = mechanicService.requestOrderCompletion(orderId, mechanicId);
+           return ResponseEntity.ok(ok ? "Completion requested" : "Not allowed");
        }
-       
-       
        
        
    }

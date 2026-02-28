@@ -487,6 +487,10 @@ public class MechanicServiceImpl implements MechanicService {
 	            dto.setServiceDate(order.getServiceDate());
 	            dto.setServiceTime(order.getServiceTime());
 
+	            dto.setCustomServiceNote(order.getCustomServiceNote());
+	            dto.setCustomPrice(order.getCustomPrice());
+
+	            
 	            dto.setVehicle(
 	                    order.getVehicleMake() + " " + order.getVehicleModel()
 	            );
@@ -504,39 +508,35 @@ public class MechanicServiceImpl implements MechanicService {
 	        return result;
 	    }
 
-	    // ==============================
-	    // MARK ORDER AS COMPLETED
-	    // ==============================
-	    @Override
-	    public boolean markOrderCompleted(Long orderId, Long mechanicId) {
-
-	        Orders order = orderRepository.findById(orderId)
-	                .orElseThrow(() -> new RuntimeException("Order not found"));
-
-	        // ✅ Security check
-	        if (!order.getMechanic().getMechanicId().equals(mechanicId)) {
-	            throw new RuntimeException("Unauthorized");
-	        }
-
-	        // ✅ Only ACCEPTED → COMPLETED
-	        if (order.getStatus() != OrderStatus.ACCEPTED) {
-	            return false;
-	        }
-
-	        order.setStatus(OrderStatus.COMPLETED);
-	        orderRepository.save(order);
-
-
-	        return true;
-	    }
-	}
-
 	 
 
+//		for send  request completion from customer   
+		@Override
+		public boolean requestOrderCompletion(Long orderId, Long mechanicId) {
+		
+		    Orders order = orderRepository.findById(orderId)
+		            .orElseThrow(() -> new RuntimeException("Order not found"));
+		
+		    // ✅ security: mechanic must own the order
+		    if (order.getMechanic() == null || !order.getMechanic().getMechanicId().equals(mechanicId)) {
+		        throw new RuntimeException("Unauthorized");
+		    }
+		
+		    // ✅ only ACCEPTED orders can request completion
+		    if (order.getStatus() != OrderStatus.ACCEPTED) {
+		        return false;
+		    }
+		
+		    order.setStatus(OrderStatus.COMPLETION_REQUESTED);
+		    orderRepository.save(order);
+		
+		    return true;
+		}
+		
+		
 
 
-
-
+}
 
 
 

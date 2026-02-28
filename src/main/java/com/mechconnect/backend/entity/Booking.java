@@ -39,9 +39,23 @@ public class Booking {
         this.status = "pending";
     }
 
+    @ManyToOne
+    @JoinColumn(name = "service_package_id")
+    private ServicePackage servicePackage;
+    
+    
+    
     
 
-    public Long getId() { return id; }
+    public ServicePackage getServicePackage() {
+		return servicePackage;
+	}
+	public void setServicePackage(ServicePackage servicePackage) {
+		this.servicePackage = servicePackage;
+	}
+	
+	
+	public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
     public Long getCustomerId() { return customerId; }

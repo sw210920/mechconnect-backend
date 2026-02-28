@@ -33,4 +33,9 @@ public interface ServiceRequestRepository extends JpaRepository<ServiceRequest, 
             RequestStatus status
     );
     
+	
+	List<ServiceRequest> findByStatusOrderByRequestIdDesc(RequestStatus status);
+	List<ServiceRequest> findAllByOrderByRequestIdDesc();
+
+	
 }

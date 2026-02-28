@@ -58,7 +58,7 @@ public class ServiceRequest {
     private String time;
     
    
-    private String ServiceDate;
+    private String serviceDate;;
 
    
     private String make;
@@ -81,11 +81,33 @@ public class ServiceRequest {
         this.createdAt = LocalDateTime.now();
     }
     
+    
+    private String customServiceNote;
+    private Double customPrice;
+    
+    
+    
 //    GETTER SETTER
     
     
     
-    public Mechanic getRequestedMechanic() {
+    public String getCustomServiceNote() {
+		return customServiceNote;
+	}
+
+	public void setCustomServiceNote(String customServiceNote) {
+		this.customServiceNote = customServiceNote;
+	}
+
+	public Double getCustomPrice() {
+		return customPrice;
+	}
+
+	public void setCustomPrice(Double customPrice) {
+		this.customPrice = customPrice;
+	}
+
+	public Mechanic getRequestedMechanic() {
 		return requestedMechanic;
 	}
 
@@ -223,17 +245,16 @@ public class ServiceRequest {
 	}
 
 	public String getServiceDate() {
-		return ServiceDate;
+		return serviceDate;
 	}
 
 	public void setServiceDate(String serviceDate) {
-		this.ServiceDate = serviceDate;
+		this.serviceDate = serviceDate;
 	}
 
-	public Object getDate() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
+
+	
 
 	
     
