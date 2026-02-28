@@ -94,6 +94,9 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
 	        request.setRegistrationNumber(dto.getRegistrationNumber());
 
 	        request.setstatus(RequestStatus.PENDING);
+	        
+	        request.setCustomServiceNote(dto.getCustomServiceNote());
+	        request.setCustomPrice(dto.getCustomPrice());
 
 	        
 	        if (dto.getMechanicId() != null) {
@@ -136,7 +139,9 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
 		  	    dto.setServiceAddress(request.getServiceAddress());
 		  	    dto.setServiceLocation(request.getServiceLocation());
 		  	    
-		  	    
+		  	  dto.setCustomServiceNote(request.getCustomServiceNote());
+		  	dto.setCustomPrice(request.getCustomPrice());
+
 		  	    
 		  	    
 		  	    dto.setServiceType(request.getServiceType());
@@ -179,7 +184,7 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
 		        serviceRequestRepository.delete(request);
 		    }
 		    
-//		 For move request to orders after accepting request
+//		 For move request to orders after accepting request 
 		 private void moveRequestToOrders(ServiceRequest req) {
 
 			    Orders order = new Orders();
@@ -202,6 +207,10 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
 
 			    order.setStatus(OrderStatus.ACCEPTED);
 			    
+			    order.setCustomServiceNote(req.getCustomServiceNote());
+			    order.setCustomPrice(req.getCustomPrice());
+
+			    
 			    System.out.println("DEBUG vehicleYear = " + req.getVehicleYear());
 
 			    
@@ -211,7 +220,7 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
 			}
 
 		 
-		 
+//		 used to reject service Request from mechanic login
 		 @Override
 		 public String rejectRequest(Long requestId) {
 
@@ -248,16 +257,7 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
 
 
 
-//		 
-//		 @Override
-//		 public void updateOrderStatus(Long orderId, OrderStatus status) {
-//
-//		     Orders order = orderRepository.findById(orderId)
-//		             .orElseThrow(() -> new RuntimeException("Order not found"));
-//
-//		     order.setStatus(status);
-//		     orderRepository.save(order);
-//		 }
+
 		}
 		
 		

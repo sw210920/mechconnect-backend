@@ -257,14 +257,6 @@ public class CustomerController {
 
 		
 //  Get Orders 
-//		@GetMapping("customer/orders")
-//		public ResponseEntity<List<CustomerOrderDto>> getCustomerOrders(
-//		        @RequestParam Long customerId) {
-//
-//		    return ResponseEntity.ok(
-//		            customerService.getOrdersForCustomer(customerId)
-//		    );
-//		}
 
 	       @CrossOrigin
 		@GetMapping("/customer/orders")
@@ -277,4 +269,19 @@ public class CustomerController {
 		}
 
 		
+//		confirm the completed order       
+	       @PutMapping("/customer/orders/{orderId}/confirm-complete")
+	       public ResponseEntity<?> confirmOrderComplete(
+	               @PathVariable Long orderId,
+	               @RequestParam Long customerId
+	       ) {
+	           boolean ok = customerService.confirmOrderCompletion(orderId, customerId);
+	           return ResponseEntity.ok(ok ? "Order completed" : "Not allowed");
+	       }
+
+	       
+	       
+	       
+	       
+	       
 }

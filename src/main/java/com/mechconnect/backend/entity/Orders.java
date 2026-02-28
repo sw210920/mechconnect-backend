@@ -48,7 +48,7 @@ public class Orders {
    
 	private String packageName;
 
-    private  String ServiceDate;
+    private  String serviceDate;;
 
     private String serviceTime;
 
@@ -69,7 +69,38 @@ public class Orders {
     @JoinColumn(name = "mechanic_id", referencedColumnName = "mechanicId", nullable = false)
     private Mechanic mechanic;
 
-    @PrePersist
+    @Column(nullable = false)
+    private boolean completionRequested = false;
+
+    @Column(nullable = false)
+    private boolean completionConfirmed = false;
+    
+    
+    private String customServiceNote;
+    private Double customPrice;
+
+    
+    public String getCustomServiceNote() {
+		return customServiceNote;
+	}
+
+
+	public void setCustomServiceNote(String customServiceNote) {
+		this.customServiceNote = customServiceNote;
+	}
+
+
+	public Double getCustomPrice() {
+		return customPrice;
+	}
+
+
+	public void setCustomPrice(Double customPrice) {
+		this.customPrice = customPrice;
+	}
+
+
+	@PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
@@ -228,13 +259,33 @@ public class Orders {
 	}
 
 
+	
+
+	
 	public String getServiceDate() {
-		return ServiceDate;
+		return serviceDate;
 	}
 
 
 	public void setServiceDate(String serviceDate) {
-		this.ServiceDate = serviceDate;
+		this.serviceDate = serviceDate;
+	}
+
+
+	public boolean isCompletionRequested() {
+	    return completionRequested;
+	}
+
+	public void setCompletionRequested(boolean completionRequested) {
+	    this.completionRequested = completionRequested;
+	}
+
+	public boolean isCompletionConfirmed() {
+	    return completionConfirmed;
+	}
+
+	public void setCompletionConfirmed(boolean completionConfirmed) {
+	    this.completionConfirmed = completionConfirmed;
 	}
 
 	

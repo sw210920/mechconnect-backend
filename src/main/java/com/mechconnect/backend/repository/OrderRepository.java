@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import com.mechconnect.backend.entity.Customer;
 import com.mechconnect.backend.entity.Mechanic;
 import com.mechconnect.backend.entity.Orders;
+import com.mechconnect.backend.entity.enums.OrderStatus;
 import com.mechconnect.backend.entity.enums.RequestStatus;
 
 @Repository
@@ -46,5 +47,10 @@ public interface OrderRepository extends JpaRepository<Orders,Long> {
             Long mechanicId,
             List<RequestStatus> statuses
     );
+    
+    List<Orders> findAllByOrderByCreatedAtDesc();
+
+    List<Orders> findByMechanic_MechanicIdAndStatusIn(Long mechanicId, List<OrderStatus> statuses);
+    
     
 }
