@@ -3,6 +3,8 @@ package com.mechconnect.backend.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import com.mechconnect.backend.dto.AdminResponseDto;
 import com.mechconnect.backend.entity.Admin;
 import com.mechconnect.backend.entity.Orders;
 import com.mechconnect.backend.entity.ServiceRequest;
+import com.mechconnect.backend.exception.ResourceNotFoundException;
 import com.mechconnect.backend.repository.AdminRepository;
 import com.mechconnect.backend.repository.CustomerRepository;
 import com.mechconnect.backend.repository.MechanicRepository;
@@ -50,19 +53,17 @@ public class AdminServiceImpl implements AdminService {
     public AdminResponseDto login(AdminLoginRequestDto request) {
 
         Admin admin = adminRepository.findByEmail(
-            request.getEmail().trim().toLowerCase()
+                request.getEmail().trim().toLowerCase()
+        ).orElseThrow(() ->
+                new ResourceNotFoundException("Admin not found")
         );
 
-        if (admin == null) {
-            throw new RuntimeException("Admin not found");
-        }
-
         if (!passwordEncoder.matches(request.getPassword(), admin.getPassword())) {
-            throw new RuntimeException("Invalid password");
+            throw new IllegalArgumentException("Invalid password");
         }
 
         AdminResponseDto dto = new AdminResponseDto();
-        dto.setAdminId(admin.getAdminId());
+        dto.setAdminId(admin.getAdminId());   // use correct getter
         dto.setEmail(admin.getEmail());
         dto.setRole(admin.getRole());
 

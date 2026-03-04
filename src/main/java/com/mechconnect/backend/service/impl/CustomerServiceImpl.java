@@ -28,6 +28,7 @@ import com.mechconnect.backend.entity.ServiceRequest;
 import com.mechconnect.backend.entity.enums.OrderStatus;
 import com.mechconnect.backend.entity.enums.RequestStatus;
 import com.mechconnect.backend.entity.enums.ServiceMode;
+import com.mechconnect.backend.exception.ResourceNotFoundException;
 import com.mechconnect.backend.repository.CustomerRepository;
 import com.mechconnect.backend.repository.MechanicRepository;
 import com.mechconnect.backend.repository.OrderRepository;
@@ -90,29 +91,29 @@ public class CustomerServiceImpl implements CustomerService {
 	
 	
 //	Log In Customer
-	 @Override
-	    public Customer loginCustomer(LoginRequestDto loginRequest) {
+	@Override
+	public Customer loginCustomer(LoginRequestDto loginRequest) {
 
-	        String cleanEmail = loginRequest.getEmail().trim();
-	        String rawPassword = loginRequest.getpassword();
+	    String cleanEmail = loginRequest.getEmail().trim();
+	    String rawPassword = loginRequest.getpassword();
 
-	        Customer customer = customerRepository.findByEmail(cleanEmail);
+	    Customer customer = customerRepository.findByEmail(cleanEmail)
+	            .orElseThrow(() ->
+	                    new ResourceNotFoundException("Customer not found"));
 
-	        if (customer == null) {
-	            return null;
-	        }
-
-	        if (!passwordEncoder.matches(rawPassword, customer.getPassword())) {
-	            return null;
-	        }
-
-	        return customer;
+	    if (!passwordEncoder.matches(rawPassword, customer.getPassword())) {
+	        throw new IllegalArgumentException("Invalid password");
 	    }
-//     Method Used For  LogIn
-	    @Override
-	    public Customer findByEmail(String email) {
-	        return customerRepository.findByEmail(email);
-	    }
+
+	    return customer;
+	}
+	
+	
+	@Override
+	public Customer findByEmail(String email) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	    
 	    
@@ -171,17 +172,12 @@ public class CustomerServiceImpl implements CustomerService {
 		
 		
 		    // 1️⃣ SEND OTP
-		    @Override
-		    public boolean sendOtpForForgotPassword(String email) {
+		@Override
+		public boolean sendOtpForForgotPassword(String email) {
 
-		        email = email.trim().toLowerCase();
-		        System.out.println("Searching email: [" + email + "]");
+		    email = email.trim().toLowerCase();
 
-		        Customer customer = customerRepository.findByEmail(email);
-
-		        if (customer == null) {
-		            return false;
-		        }
+		    customerRepository.findByEmail(email).ifPresent(customer -> {
 
 		        String otp = String.valueOf(new Random().nextInt(900000) + 100000);
 
@@ -189,64 +185,64 @@ public class CustomerServiceImpl implements CustomerService {
 		        customer.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
 
 		        customerRepository.save(customer);
-		        
+
 		        emailService.sendOtpEmail(customer.getEmail(), otp);
-		        return true;
-		    }
+		    });
+
+		    // Always return true (prevents email enumeration attack)
+		    return true;
+		}
 
 		    // 2️⃣ VERIFY OTP
-		    @Override
-		    public String verifyOtp(String email, String otp) {
+		@Override
+		public String verifyOtp(String email, String otp) {
 
-		        email = email.trim().toLowerCase();
-		        otp = otp.trim();
+		    email = email.trim().toLowerCase();
+		    otp = otp.trim();
 
-		        Customer customer = customerRepository.findByEmail(email);
+		    Customer customer = customerRepository.findByEmail(email)
+		            .orElseThrow(() ->
+		                    new ResourceNotFoundException("Email not registered"));
 
-		        if (customer == null) {
-		            return "Email not registered";
-		        }
-
-		        if (!otp.equals(customer.getOtp())) {
-		            return "Invalid OTP";
-		        }
-
-		        if (customer.getOtpExpiry().isBefore(LocalDateTime.now())) {
-		            return "OTP expired";
-		        }
-
-		        return "SUCCESS";
+		    if (customer.getOtp() == null || !otp.equals(customer.getOtp())) {
+		        throw new IllegalArgumentException("Invalid OTP");
 		    }
+
+		    if (customer.getOtpExpiry() == null ||
+		        customer.getOtpExpiry().isBefore(LocalDateTime.now())) {
+		        throw new IllegalArgumentException("OTP expired");
+		    }
+
+		    return "SUCCESS";
+		}
 
 		    // 3️⃣ RESET PASSWORD
-		    @Override
-		    public String resetPassword(String email, String newPassword) {
+		@Override
+		public String resetPassword(String email, String newPassword) {
 
-		        email = email.trim().toLowerCase();
-		        newPassword = newPassword.trim();
+		    email = email.trim().toLowerCase();
+		    newPassword = newPassword.trim();
 
-		        Customer customer = customerRepository.findByEmail(email);
+		    Customer customer = customerRepository.findByEmail(email)
+		            .orElseThrow(() ->
+		                    new ResourceNotFoundException("Email not registered"));
 
-		        if (customer == null) {
-		            return "Email not registered";
-		        }
-
-		        if (customer.getOtp() == null || customer.getOtpExpiry() == null) {
-		            return "OTP verification required";
-		        }
-
-		        if (customer.getOtpExpiry().isBefore(LocalDateTime.now())) {
-		            return "OTP expired";
-		        }
-
-		        customer.setPassword(passwordEncoder.encode(newPassword));
-		        customer.setOtp(null);
-		        customer.setOtpExpiry(null);
-
-		        customerRepository.save(customer);
-
-		        return "SUCCESS";
+		    if (customer.getOtp() == null || customer.getOtpExpiry() == null) {
+		        throw new IllegalArgumentException("OTP verification required");
 		    }
+
+		    if (customer.getOtpExpiry().isBefore(LocalDateTime.now())) {
+		        throw new IllegalArgumentException("OTP expired");
+		    }
+
+		    customer.setPassword(passwordEncoder.encode(newPassword));
+		    customer.setOtp(null);
+		    customer.setOtpExpiry(null);
+
+		    customerRepository.save(customer);
+
+		    return "SUCCESS";
+		}
 		
 		
 //	Delete Customer Acc	
@@ -397,6 +393,9 @@ public class CustomerServiceImpl implements CustomerService {
 
 	    return true;
 	}
+
+
+
 
 	
 	

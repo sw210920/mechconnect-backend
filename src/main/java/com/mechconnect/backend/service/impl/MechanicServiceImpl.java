@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ import com.mechconnect.backend.entity.enums.OrderStatus;
 import com.mechconnect.backend.entity.enums.RequestStatus;
 import com.mechconnect.backend.entity.enums.ServiceMode;
 import com.mechconnect.backend.entity.enums.ServiceType;
+import com.mechconnect.backend.exception.ResourceNotFoundException;
 import com.mechconnect.backend.repository.MechanicRepository;
 import com.mechconnect.backend.repository.OrderRepository;
 import com.mechconnect.backend.repository.ServiceRequestRepository;
@@ -118,18 +120,16 @@ public class MechanicServiceImpl implements MechanicService {
 	    String email = loginRequest.getEmail().trim();
 	    String rawPassword = loginRequest.getpassword();
 
-	    Mechanic mechanic = mechanicRepository.findByEmail(email);
-
-	    if (mechanic == null) {
-	        return ResponseEntity.status(404).body("User not found");
-	    }
+	    Mechanic mechanic = mechanicRepository.findByEmail(email)
+	            .orElseThrow(() ->
+	                    new ResourceNotFoundException("User not found"));
 
 	    if (!passwordEncoder.matches(rawPassword, mechanic.getPassword())) {
 	        return ResponseEntity.status(401).body("Invalid password");
 	    }
 
 	    MechanicLoginResponseDto res = new MechanicLoginResponseDto();
-	    res.setMechanicId(mechanic.getMechanicId());
+	    res.setMechanicId(mechanic.getMechanicId());   // use correct ID getter
 	    res.setFirstName(mechanic.getFirstName());
 	    res.setLastName(mechanic.getLastName());
 	    res.setEmail(mechanic.getEmail());
@@ -137,7 +137,6 @@ public class MechanicServiceImpl implements MechanicService {
 
 	    return ResponseEntity.ok(res);
 	}
-
 	
 	
 //	Get Mechanic Profile
@@ -226,11 +225,9 @@ public class MechanicServiceImpl implements MechanicService {
 
 	    System.out.println("Searching email: [" + email + "]");
 
-	    Mechanic mechanic = mechanicRepository.findByEmail(email);
-
-	    if (mechanic == null) {
-	        return ResponseEntity.status(404).body("Email not registered");
-	    }
+	    Mechanic mechanic = mechanicRepository.findByEmail(email)
+	            .orElseThrow(() ->
+	                    new ResourceNotFoundException("Email not registered"));
 
 	    String otp = String.valueOf(new Random().nextInt(900000) + 100000);
 
@@ -240,9 +237,11 @@ public class MechanicServiceImpl implements MechanicService {
 	    mechanicRepository.save(mechanic);
 
 	    emailService.sendOtpEmail(mechanic.getEmail(), otp);
+
 	    return ResponseEntity.ok("OTP sent successfully");
 	}
-
+	
+	
 	
 //	Varify OTP To Forgot Password
 	@Override
@@ -259,11 +258,9 @@ public class MechanicServiceImpl implements MechanicService {
 	    email = email.trim().toLowerCase();
 	    otp = otp.trim();
 
-	    Mechanic mechanic = mechanicRepository.findByEmail(email);
-
-	    if (mechanic == null) {
-	        return ResponseEntity.status(404).body("Email not registered");
-	    }
+	    Mechanic mechanic = mechanicRepository.findByEmail(email)
+	            .orElseThrow(() ->
+	                    new ResourceNotFoundException("Email not registered"));
 
 	    // 🔐 Check OTP
 	    if (!otp.equals(mechanic.getOtp())) {
@@ -271,7 +268,8 @@ public class MechanicServiceImpl implements MechanicService {
 	    }
 
 	    // ⏰ Check expiry
-	    if (mechanic.getOtpExpiry().isBefore(LocalDateTime.now())) {
+	    if (mechanic.getOtpExpiry() == null ||
+	        mechanic.getOtpExpiry().isBefore(LocalDateTime.now())) {
 	        return ResponseEntity.status(400).body("OTP expired");
 	    }
 
@@ -295,18 +293,16 @@ public class MechanicServiceImpl implements MechanicService {
 	    email = email.trim().toLowerCase();
 	    newPassword = newPassword.trim();
 
-	    Mechanic mechanic = mechanicRepository.findByEmail(email);
+	    Mechanic mechanic = mechanicRepository.findByEmail(email)
+	            .orElseThrow(() ->
+	                    new ResourceNotFoundException("Email not registered"));
 
-	    if (mechanic == null) {
-	        return ResponseEntity.status(404).body("Email not registered");
-	    }
-
-	    // 🔐 Ensure OTP exists (means it was generated & verified)
+	    // 🔐 Ensure OTP exists
 	    if (mechanic.getOtp() == null || mechanic.getOtpExpiry() == null) {
 	        return ResponseEntity.status(400).body("OTP verification required");
 	    }
 
-	    // ⏰ Check OTP expiry again for safety
+	    // ⏰ Check expiry again
 	    if (mechanic.getOtpExpiry().isBefore(LocalDateTime.now())) {
 	        return ResponseEntity.status(400).body("OTP expired");
 	    }
@@ -314,7 +310,7 @@ public class MechanicServiceImpl implements MechanicService {
 	    // 🔐 Encrypt & update password
 	    mechanic.setPassword(passwordEncoder.encode(newPassword));
 
-	    // 🧹 Clear OTP after successful reset
+	    // 🧹 Clear OTP after success
 	    mechanic.setOtp(null);
 	    mechanic.setOtpExpiry(null);
 

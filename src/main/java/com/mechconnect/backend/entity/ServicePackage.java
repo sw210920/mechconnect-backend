@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.mechconnect.backend.entity.enums.CreatedByRole;
 import com.mechconnect.backend.entity.enums.PackageType;
 
@@ -75,11 +76,12 @@ public class ServicePackage {
      * Package → Services
      */
     @OneToMany(
-        mappedBy = "servicePackage",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true
-    )
-    private List<PackageService> services = new ArrayList<>();
+    	    mappedBy = "servicePackage",
+    	    cascade = CascadeType.ALL,
+    	    orphanRemoval = true
+    	)
+    	@JsonManagedReference
+    	private List<PackageService> services = new ArrayList<>();
 
     @CreationTimestamp
     private LocalDateTime createdAt;

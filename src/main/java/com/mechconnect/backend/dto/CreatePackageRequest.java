@@ -13,7 +13,7 @@ public class CreatePackageRequest {
 
     private PackageType packageType;
     private CreatedByRole createdByRole;
-    private Long createdById;
+ 
 
     private Double discount;
     private Integer estimatedTime;
@@ -55,13 +55,7 @@ public class CreatePackageRequest {
 		this.createdByRole = createdByRole;
 	}
 
-	public Long getCreatedById() {
-		return createdById;
-	}
-
-	public void setCreatedById(Long createdById) {
-		this.createdById = createdById;
-	}
+	
 
 	public Double getDiscount() {
 		return discount;
