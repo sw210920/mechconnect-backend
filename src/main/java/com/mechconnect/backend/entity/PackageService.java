@@ -1,5 +1,7 @@
 package com.mechconnect.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -17,10 +19,10 @@ public class PackageService {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "package_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "package_id")
+    @JsonBackReference
     private ServicePackage servicePackage;
-
     @ManyToOne
     @JoinColumn(name = "service_id", nullable = false)
     private Service service;
